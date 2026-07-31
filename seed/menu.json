@@ -1,0 +1,11 @@
+[
+  { "id": 1, "category": "Entrées", "name": "Camarons Dynamites", "description": "Crevettes croustillantes, sauce spicy, chou au ponzu, gingembre râpé, oignons frits.", "price": 16, "photo": "", "type": "nourriture" },
+  { "id": 2, "category": "Entrées", "name": "Légine Australe", "description": "Gravlax de légine en fines tranches, rougail coco-citron vert, huile parfumée au combava.", "price": 18, "photo": "", "type": "nourriture" },
+  { "id": 3, "category": "Entrées", "name": "Foie Gras au Galabé", "description": "Foie gras du Sud-Ouest mi-cuit au galabé, nuage d'ail noir, vinaigre balsamique, chapelure au cacao.", "price": 18, "photo": "", "type": "nourriture" },
+  { "id": 4, "category": "Plats", "name": "Zourite de Nos Côtes", "description": "Tentacules en deux cuissons, cacahuètes grillées, légumes rôtis aux épices douces, gaspacho de poivrons grillés.", "price": 29, "photo": "", "type": "nourriture" },
+  { "id": 5, "category": "Plats", "name": "Chicken Burger", "description": "Poulet croustillant pané au pop-corn, mayonnaise Tex-Mex fumée, pickles d'oignon rouge, cheddar, frites fraîches, salade.", "price": 25, "photo": "", "type": "nourriture" },
+  { "id": 6, "category": "Plats", "name": "Mozza Burger", "description": "Crispy d'aubergine, stracciatella à la truffe, crémeux de champignons péi, roquette.", "price": 25, "photo": "", "type": "nourriture" },
+  { "id": 7, "category": "Plats", "name": "L'Ardoise du Chef", "description": "Carpaccio de bœuf Wagyu coupé au couteau, pesto d'amandes, crémeux d'ail, parmesan au basilic, chapelure de tomate, salade.", "price": 30, "photo": "", "type": "nourriture" },
+  { "id": 8, "category": "Plats", "name": "Tartare du Moment", "description": "Notes de vanille, crémeux coco et betteraves grillées, frites fraîches.", "price": 28, "photo": "", "type": "nourriture" },
+  { "id": 9, "category": "Plats", "name": "Solomillo de Porc Ibérique", "description": "Jus parfumé au massalé, purée au caloupilé et carottes glacées.", "price": 27, "photo": "", "type": "nourriture" }
+]

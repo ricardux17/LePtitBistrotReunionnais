@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le P'tit Bistro Réunionnais | Notre Carte</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo"><img src="images/logo.jpg" alt="Logo Le P'tit Bistro Réunionnais" class="logo-img" id="logo-icon"><a href="index.html" class="logo-text">Le P'tit Bistro Réunionnais</a></div>
+      <nav class="main-nav">
+        <a href="index.html">Accueil</a>
+        <a href="menu.html" class="active">Notre Carte</a>
+        <a href="faq.html">FAQ</a>
+        <a href="reservation.html" class="nav-cta">Réserver ma table</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-header">
+    <div class="container">
+      <span class="hero-eyebrow">Cuisine familiale bistronomique</span>
+      <h1>Notre Carte</h1>
+      <p>Une sélection de plats préparés avec des produits frais et de saison.</p>
+    </div>
+  </section>
+
+  <section class="section menu-type-section">
+    <div class="container">
+      <div class="menu-type-tabs">
+        <button class="menu-type-btn active" data-view="nourriture">Carte Nourriture</button>
+        <button class="menu-type-btn" data-view="boisson">Carte Boissons</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="view-nourriture">
+    <section class="section menu-type-view">
+      <div class="container">
+        <div class="section-title">
+          <span class="hero-eyebrow">Suggestions du chef</span>
+          <h2>La carte du moment</h2>
+        </div>
+        <div class="carte-wrapper">
+          <img id="carte-image" src="images/carte.jpg" alt="Carte du moment du P'tit Bistro Réunionnais" class="carte-image">
+        </div>
+      </div>
+    </section>
+
+    <section class="section carte-teaser menu-type-view">
+      <div class="container">
+        <div class="section-title">
+          <span class="hero-eyebrow">Toute l'année</span>
+          <h2>Notre carte</h2>
+        </div>
+        <div id="menu-content" class="menu-content">
+          <p>Chargement de la carte...</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="view-boisson" class="hidden">
+    <section class="section menu-type-view hidden" id="carte-boisson-section">
+      <div class="container">
+        <div class="section-title">
+          <span class="hero-eyebrow">Suggestions du bar</span>
+          <h2>La carte des boissons du moment</h2>
+        </div>
+        <div class="carte-wrapper">
+          <img id="carte-image-boisson" src="" alt="Carte des boissons du moment" class="carte-image">
+        </div>
+      </div>
+    </section>
+
+    <section class="section carte-teaser menu-type-view">
+      <div class="container">
+        <div class="section-title">
+          <span class="hero-eyebrow">À déguster sur place</span>
+          <h2>Carte des boissons</h2>
+        </div>
+        <div id="drinks-content" class="menu-content">
+          <p>Chargement de la carte...</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-links">
+      <div class="container footer-links-inner">
+        <a href="index.html">Accueil</a>
+        <a href="menu.html">Notre Carte</a>
+        <a href="reservation.html">Réservations</a>
+        <a href="faq.html">FAQ</a>
+        <a href="mentions-legales.html">Mentions Légales</a>
+        <a href="confidentialite.html">Confidentialité</a>
+      </div>
+    </div>
+    <div class="footer-main">
+      <div class="container">
+        <div class="footer-socials">
+          <a href="https://www.facebook.com/leptitbistroreunionnais/" target="_blank" rel="noopener" aria-label="Facebook" class="footer-social-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H7.9V12h2.6V9.8c0-2.6 1.6-4 3.9-4 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.3 0-1.7.8-1.7 1.6V12h2.9l-.5 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/le_ptit_bistro_reunionnais/?hl=fr" target="_blank" rel="noopener" aria-label="Instagram" class="footer-social-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+        <p class="footer-address">129 Rue Marius et Ary Leblond, Saint-Paul 97460, La Réunion</p>
+        <p class="footer-contact">Téléphone : +262 693 55 81 00</p>
+        <p class="footer-copyright">&copy; 2026 Le P'tit Bistro Réunionnais. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="photo-lightbox" class="lightbox hidden">
+    <button class="lightbox-close" aria-label="Fermer">&times;</button>
+    <img id="lightbox-image" src="" alt="">
+  </div>
+
+  <script src="js/logo-lightbox.js"></script>
+  <script src="js/menu.js"></script>
+</body>
+</html>

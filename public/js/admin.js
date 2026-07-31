@@ -1,0 +1,343 @@
+const loginBox = document.getElementById('login-box');
+const adminPanel = document.getElementById('admin-panel');
+const loginBtn = document.getElementById('login-btn');
+const passwordInput = document.getElementById('admin-password');
+const loginFeedback = document.getElementById('login-feedback');
+const tbody = document.querySelector('#reservations-table tbody');
+
+function getPassword() {
+  return sessionStorage.getItem('adminPassword');
+}
+
+function statusOptions(current) {
+  const statuses = ['en attente', 'confirmée', 'annulée'];
+  return statuses.map(s => `<option value="${s}" ${s === current ? 'selected' : ''}>${s}</option>`).join('');
+}
+
+async function loadReservations() {
+  const password = getPassword();
+  const res = await fetch('/api/reservations', {
+    headers: { 'x-admin-password': password }
+  });
+
+  if (res.status === 401) {
+    sessionStorage.removeItem('adminPassword');
+    showLogin('Mot de passe incorrect.');
+    return;
+  }
+
+  const reservations = await res.json();
+
+  tbody.innerHTML = reservations.map(r => `
+    <tr data-id="${r.id}">
+      <td>${r.date}</td>
+      <td>${r.time}</td>
+      <td>${r.name}</td>
+      <td>${r.email}<br>${r.phone}</td>
+      <td>${r.guests}</td>
+      <td>${r.message || '-'}</td>
+      <td>
+        <select class="status-select">${statusOptions(r.status)}</select>
+      </td>
+      <td>
+        <button class="btn-small btn-delete">Supprimer</button>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="8">Aucune réservation pour le moment.</td></tr>';
+}
+
+tbody.addEventListener('change', async (e) => {
+  if (!e.target.classList.contains('status-select')) return;
+  const row = e.target.closest('tr');
+  const id = row.dataset.id;
+  await fetch(`/api/reservations/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-admin-password': getPassword()
+    },
+    body: JSON.stringify({ status: e.target.value })
+  });
+});
+
+tbody.addEventListener('click', async (e) => {
+  if (!e.target.classList.contains('btn-delete')) return;
+  const row = e.target.closest('tr');
+  const id = row.dataset.id;
+  if (!confirm('Supprimer cette réservation ?')) return;
+
+  await fetch(`/api/reservations/${id}`, {
+    method: 'DELETE',
+    headers: { 'x-admin-password': getPassword() }
+  });
+  loadReservations();
+});
+
+// --- Onglets ---
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabPanels = {
+  reservations: document.getElementById('tab-reservations'),
+  carte: document.getElementById('tab-carte'),
+  menu: document.getElementById('tab-menu')
+};
+
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    Object.entries(tabPanels).forEach(([key, panel]) => {
+      panel.classList.toggle('hidden', key !== btn.dataset.tab);
+    });
+
+    if (btn.dataset.tab === 'carte') loadCartePreview();
+    if (btn.dataset.tab === 'menu') loadMenuList();
+  });
+});
+
+// --- Carte du moment (Nourriture + Boissons) ---
+function setupCarteForm({ type, settingKey, formId, feedbackId, previewId, fileId }) {
+  const form = document.getElementById(formId);
+  const feedback = document.getElementById(feedbackId);
+  const preview = document.getElementById(previewId);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fileInput = document.getElementById(fileId);
+    if (!fileInput.files[0]) return;
+
+    const formData = new FormData();
+    formData.append('type', type);
+    formData.append('carte', fileInput.files[0]);
+
+    feedback.className = 'form-feedback';
+    feedback.textContent = 'Envoi en cours...';
+
+    try {
+      const res = await fetch('/api/admin/carte', {
+        method: 'POST',
+        headers: { 'x-admin-password': getPassword() },
+        body: formData
+      });
+      const result = await res.json();
+
+      if (!res.ok) throw new Error(result.error || 'Erreur lors de l\'envoi.');
+
+      feedback.textContent = 'Carte mise à jour avec succès !';
+      feedback.classList.add('success');
+      form.reset();
+      preview.src = `${result[settingKey]}?t=${Date.now()}`;
+      preview.classList.remove('hidden');
+    } catch (err) {
+      feedback.textContent = err.message;
+      feedback.classList.add('error');
+    }
+  });
+
+  return { preview };
+}
+
+const carteNourriturePreview = setupCarteForm({
+  type: 'nourriture',
+  settingKey: 'carteNourriture',
+  formId: 'carte-nourriture-form',
+  feedbackId: 'carte-nourriture-feedback',
+  previewId: 'admin-carte-nourriture-preview',
+  fileId: 'carte-nourriture-file'
+}).preview;
+
+const carteBoissonPreview = setupCarteForm({
+  type: 'boisson',
+  settingKey: 'carteBoisson',
+  formId: 'carte-boisson-form',
+  feedbackId: 'carte-boisson-feedback',
+  previewId: 'admin-carte-boisson-preview',
+  fileId: 'carte-boisson-file'
+}).preview;
+
+async function loadCartePreview() {
+  const res = await fetch('/api/settings');
+  const settings = await res.json();
+
+  if (settings.carteNourriture) {
+    carteNourriturePreview.src = `${settings.carteNourriture}?t=${Date.now()}`;
+  }
+
+  if (settings.carteBoisson) {
+    carteBoissonPreview.src = `${settings.carteBoisson}?t=${Date.now()}`;
+    carteBoissonPreview.classList.remove('hidden');
+  } else {
+    carteBoissonPreview.classList.add('hidden');
+  }
+}
+
+// --- Menu détaillé ---
+const menuList = document.getElementById('menu-list');
+const menuForm = document.getElementById('menu-form');
+const menuFeedback = document.getElementById('menu-feedback');
+const menuFormTitle = document.getElementById('menu-form-title');
+const menuSubmitBtn = document.getElementById('menu-submit-btn');
+const menuCancelBtn = document.getElementById('menu-cancel-btn');
+const menuItemIdInput = document.getElementById('menu-item-id');
+const menuCategoryInput = document.getElementById('menu-category');
+const menuNameInput = document.getElementById('menu-name');
+const menuDescriptionInput = document.getElementById('menu-description');
+const menuPriceInput = document.getElementById('menu-price');
+const menuPhotoInput = document.getElementById('menu-photo');
+const menuTypeInput = document.getElementById('menu-type');
+const menuFilterButtons = document.querySelectorAll('.menu-filter-btn');
+let currentMenuFilter = 'nourriture';
+
+async function loadMenuList() {
+  const res = await fetch('/api/menu');
+  const items = await res.json();
+  const filtered = items.filter(item => (item.type || 'nourriture') === currentMenuFilter);
+
+  menuList.innerHTML = filtered.map(item => `
+    <div class="admin-menu-item" data-id="${item.id}">
+      <div class="admin-menu-item-body">
+        <span class="admin-menu-item-category">${item.category}</span>
+        <h4>${item.name}</h4>
+        <p>${item.description || ''}</p>
+        ${item.photo ? `<img src="${item.photo}" alt="${item.name}" class="admin-menu-item-photo">` : ''}
+        <span class="admin-menu-item-price">${item.price.toFixed(2)} €</span>
+      </div>
+      <div class="admin-menu-item-actions">
+        <button class="btn-small btn-edit">Modifier</button>
+        ${item.photo ? '<button class="btn-small btn-remove-photo">Retirer la photo</button>' : ''}
+        <button class="btn-small btn-delete">Supprimer</button>
+      </div>
+    </div>
+  `).join('') || '<p>Aucun plat dans cette carte pour le moment.</p>';
+}
+
+menuFilterButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    menuFilterButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMenuFilter = btn.dataset.filter;
+    resetMenuForm();
+    loadMenuList();
+  });
+});
+
+function resetMenuForm() {
+  menuForm.reset();
+  menuItemIdInput.value = '';
+  menuTypeInput.value = currentMenuFilter;
+  menuFormTitle.textContent = 'Ajouter un plat';
+  menuSubmitBtn.textContent = 'Ajouter au menu';
+  menuCancelBtn.classList.add('hidden');
+}
+
+menuCancelBtn.addEventListener('click', resetMenuForm);
+
+menuList.addEventListener('click', async (e) => {
+  const row = e.target.closest('.admin-menu-item');
+  if (!row) return;
+  const id = row.dataset.id;
+
+  if (e.target.classList.contains('btn-delete')) {
+    if (!confirm('Supprimer ce plat ?')) return;
+    await fetch(`/api/menu/${id}`, {
+      method: 'DELETE',
+      headers: { 'x-admin-password': getPassword() }
+    });
+    loadMenuList();
+  }
+
+  if (e.target.classList.contains('btn-remove-photo')) {
+    if (!confirm('Retirer la photo de ce plat ?')) return;
+    await fetch(`/api/menu/${id}/photo`, {
+      method: 'DELETE',
+      headers: { 'x-admin-password': getPassword() }
+    });
+    loadMenuList();
+  }
+
+  if (e.target.classList.contains('btn-edit')) {
+    const res = await fetch('/api/menu');
+    const items = await res.json();
+    const item = items.find(i => String(i.id) === id);
+    if (!item) return;
+
+    menuItemIdInput.value = item.id;
+    menuTypeInput.value = item.type || 'nourriture';
+    menuCategoryInput.value = item.category;
+    menuNameInput.value = item.name;
+    menuDescriptionInput.value = item.description || '';
+    menuPriceInput.value = item.price;
+    menuFormTitle.textContent = 'Modifier le plat';
+    menuSubmitBtn.textContent = 'Enregistrer les modifications';
+    menuCancelBtn.classList.remove('hidden');
+    menuForm.scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+menuForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData();
+  formData.append('type', menuTypeInput.value);
+  formData.append('category', menuCategoryInput.value.trim());
+  formData.append('name', menuNameInput.value.trim());
+  formData.append('description', menuDescriptionInput.value.trim());
+  formData.append('price', menuPriceInput.value);
+  if (menuPhotoInput.files[0]) {
+    formData.append('photo', menuPhotoInput.files[0]);
+  }
+
+  const id = menuItemIdInput.value;
+  const url = id ? `/api/menu/${id}` : '/api/menu';
+  const method = id ? 'PUT' : 'POST';
+
+  menuFeedback.className = 'form-feedback';
+  menuFeedback.textContent = 'Enregistrement...';
+
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: { 'x-admin-password': getPassword() },
+      body: formData
+    });
+    const result = await res.json();
+
+    if (!res.ok) throw new Error(result.error || 'Erreur lors de l\'enregistrement.');
+
+    menuFeedback.textContent = 'Plat enregistré avec succès !';
+    menuFeedback.classList.add('success');
+    resetMenuForm();
+    loadMenuList();
+  } catch (err) {
+    menuFeedback.textContent = err.message;
+    menuFeedback.classList.add('error');
+  }
+});
+
+function showLogin(message) {
+  loginBox.classList.remove('hidden');
+  adminPanel.classList.add('hidden');
+  loginFeedback.textContent = message || '';
+}
+
+function showPanel() {
+  loginBox.classList.add('hidden');
+  adminPanel.classList.remove('hidden');
+  loadReservations();
+}
+
+loginBtn.addEventListener('click', () => {
+  const password = passwordInput.value;
+  if (!password) return;
+  sessionStorage.setItem('adminPassword', password);
+  showPanel();
+});
+
+passwordInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') loginBtn.click();
+});
+
+if (getPassword()) {
+  showPanel();
+} else {
+  showLogin();
+}

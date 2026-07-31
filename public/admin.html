@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le P'tit Bistro Réunionnais | Administration</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo"><img src="images/logo.jpg" alt="Logo Le P'tit Bistro Réunionnais" class="logo-img" id="logo-icon"><a href="index.html" class="logo-text">Le P'tit Bistro Réunionnais</a></div>
+      <nav class="main-nav">
+        <a href="index.html">Accueil</a>
+        <a href="menu.html">Notre Carte</a>
+        <a href="faq.html">FAQ</a>
+        <a href="reservation.html" class="nav-cta">Réserver ma table</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-header">
+    <div class="container">
+      <h1>Administration</h1>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div id="login-box" class="form-card narrow">
+        <label for="admin-password">Mot de passe administrateur</label>
+        <input type="password" id="admin-password">
+        <button id="login-btn" class="btn btn-primary">Se connecter</button>
+        <p id="login-feedback" class="form-feedback"></p>
+      </div>
+
+      <div id="admin-panel" class="admin-panel hidden">
+        <div class="admin-tabs">
+          <button class="tab-btn active" data-tab="reservations">Réservations</button>
+          <button class="tab-btn" data-tab="carte">Carte du moment</button>
+          <button class="tab-btn" data-tab="menu">Menu détaillé</button>
+        </div>
+
+        <div id="tab-reservations" class="tab-panel">
+          <div class="table-wrapper">
+            <table id="reservations-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Heure</th>
+                  <th>Nom</th>
+                  <th>Contact</th>
+                  <th>Convives</th>
+                  <th>Message</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tab-carte" class="tab-panel hidden">
+          <div class="form-card narrow">
+            <h3>Carte du moment — Nourriture</h3>
+            <p class="admin-hint">Cette image est affichée en haut de l'onglet « Carte Nourriture ».</p>
+            <img id="admin-carte-nourriture-preview" src="images/carte.jpg" alt="Carte nourriture actuelle" class="admin-carte-preview">
+            <form id="carte-nourriture-form">
+              <div class="form-row">
+                <label for="carte-nourriture-file">Nouvelle image</label>
+                <input type="file" id="carte-nourriture-file" accept="image/*" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Mettre à jour la carte</button>
+              <p id="carte-nourriture-feedback" class="form-feedback"></p>
+            </form>
+          </div>
+
+          <div class="form-card narrow admin-carte-block">
+            <h3>Carte du moment — Boissons</h3>
+            <p class="admin-hint">Cette image est affichée en haut de l'onglet « Carte Boissons ». Laisse vide si tu ne veux pas en afficher.</p>
+            <img id="admin-carte-boisson-preview" src="" alt="Carte boissons actuelle" class="admin-carte-preview hidden">
+            <form id="carte-boisson-form">
+              <div class="form-row">
+                <label for="carte-boisson-file">Nouvelle image</label>
+                <input type="file" id="carte-boisson-file" accept="image/*" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Mettre à jour la carte</button>
+              <p id="carte-boisson-feedback" class="form-feedback"></p>
+            </form>
+          </div>
+        </div>
+
+        <div id="tab-menu" class="tab-panel hidden">
+          <div class="form-card narrow" id="menu-form-card">
+            <h3 id="menu-form-title">Ajouter un plat</h3>
+            <form id="menu-form">
+              <input type="hidden" id="menu-item-id">
+              <div class="form-row">
+                <label for="menu-type">Carte *</label>
+                <select id="menu-type" required>
+                  <option value="nourriture">Carte Nourriture</option>
+                  <option value="boisson">Carte Boissons</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label for="menu-category">Catégorie *</label>
+                <input type="text" id="menu-category" required placeholder="Entrées, Plats, Desserts...">
+              </div>
+              <div class="form-row">
+                <label for="menu-name">Nom du plat *</label>
+                <input type="text" id="menu-name" required>
+              </div>
+              <div class="form-row">
+                <label for="menu-description">Description</label>
+                <textarea id="menu-description" rows="2"></textarea>
+              </div>
+              <div class="form-row form-grid">
+                <div>
+                  <label for="menu-price">Prix (€) *</label>
+                  <input type="number" id="menu-price" step="0.5" min="0" required>
+                </div>
+                <div>
+                  <label for="menu-photo">Photo (optionnel)</label>
+                  <input type="file" id="menu-photo" accept="image/*">
+                </div>
+              </div>
+              <div class="form-row form-actions">
+                <button type="submit" class="btn btn-primary" id="menu-submit-btn">Ajouter au menu</button>
+                <button type="button" class="btn btn-outline hidden" id="menu-cancel-btn">Annuler la modification</button>
+              </div>
+              <p id="menu-feedback" class="form-feedback"></p>
+            </form>
+          </div>
+
+          <div class="menu-filter-tabs">
+            <button class="menu-filter-btn active" data-filter="nourriture">Carte Nourriture</button>
+            <button class="menu-filter-btn" data-filter="boisson">Carte Boissons</button>
+          </div>
+          <div id="menu-list" class="admin-menu-list"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 Le P'tit Bistro Réunionnais. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script src="js/logo-lightbox.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
