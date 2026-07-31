@@ -2,8 +2,8 @@ const { Redis } = require('@upstash/redis');
 const seedItems = require('./seed/menu.json');
 
 const redis = new Redis({
-  url: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
+  url: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || process.env.kv_KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || process.env.kv_KV_REST_API_TOKEN
 });
 
 const DEFAULT_SETTINGS = { carteNourriture: 'images/carte.jpg', carteBoisson: '' };

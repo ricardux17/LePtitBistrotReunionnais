@@ -59,6 +59,8 @@ app.get('/api/debug-env', (req, res) => {
   res.json({
     KV_REST_API_URL: describe(process.env.KV_REST_API_URL),
     KV_REST_API_TOKEN: describe(process.env.KV_REST_API_TOKEN),
+    kv_KV_REST_API_URL: describe(process.env.kv_KV_REST_API_URL),
+    kv_KV_REST_API_TOKEN: describe(process.env.kv_KV_REST_API_TOKEN),
     UPSTASH_REDIS_REST_URL: describe(process.env.UPSTASH_REDIS_REST_URL),
     UPSTASH_REDIS_REST_TOKEN: describe(process.env.UPSTASH_REDIS_REST_TOKEN),
     BLOB_READ_WRITE_TOKEN: describe(process.env.BLOB_READ_WRITE_TOKEN),
