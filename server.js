@@ -62,7 +62,9 @@ app.get('/api/debug-env', (req, res) => {
     UPSTASH_REDIS_REST_URL: describe(process.env.UPSTASH_REDIS_REST_URL),
     UPSTASH_REDIS_REST_TOKEN: describe(process.env.UPSTASH_REDIS_REST_TOKEN),
     BLOB_READ_WRITE_TOKEN: describe(process.env.BLOB_READ_WRITE_TOKEN),
-    VERCEL_ENV: process.env.VERCEL_ENV || 'absent'
+    VERCEL_ENV: process.env.VERCEL_ENV || 'absent',
+    matchingKeys: Object.keys(process.env).filter(k => /kv|redis|blob|upstash|storage/i.test(k)),
+    totalEnvVarCount: Object.keys(process.env).length
   });
 });
 
