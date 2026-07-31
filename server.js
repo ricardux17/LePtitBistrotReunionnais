@@ -53,36 +53,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// --- Diagnostic temporaire (à retirer une fois le déploiement validé) ---
-app.get('/api/debug-env', (req, res) => {
-  const describe = (v) => (v ? `présent (${v.length} car.)` : 'absent');
-  res.json({
-    KV_REST_API_URL: describe(process.env.KV_REST_API_URL),
-    KV_REST_API_TOKEN: describe(process.env.KV_REST_API_TOKEN),
-    kv_KV_REST_API_URL: describe(process.env.kv_KV_REST_API_URL),
-    kv_KV_REST_API_TOKEN: describe(process.env.kv_KV_REST_API_TOKEN),
-    UPSTASH_REDIS_REST_URL: describe(process.env.UPSTASH_REDIS_REST_URL),
-    UPSTASH_REDIS_REST_TOKEN: describe(process.env.UPSTASH_REDIS_REST_TOKEN),
-    BLOB_READ_WRITE_TOKEN: describe(process.env.BLOB_READ_WRITE_TOKEN),
-    VERCEL_ENV: process.env.VERCEL_ENV || 'absent',
-    matchingKeys: Object.keys(process.env).filter(k => /kv|redis|blob|upstash|storage/i.test(k)),
-    totalEnvVarCount: Object.keys(process.env).length
-  });
-});
-
-app.get('/api/debug-blob', async (req, res) => {
-  const start = Date.now();
-  try {
-    const blob = await put(`debug/test-${Date.now()}.txt`, 'hello world', {
-      access: 'public',
-      contentType: 'text/plain'
-    });
-    res.json({ ok: true, ms: Date.now() - start, url: blob.url });
-  } catch (err) {
-    res.status(500).json({ ok: false, ms: Date.now() - start, error: err.message });
-  }
-});
-
 let dbReady = null;
 app.use((req, res, next) => {
   if (!dbReady) dbReady = db.init();
