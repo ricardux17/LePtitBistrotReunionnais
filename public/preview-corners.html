@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APERÇU — Feuilles décoratives</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body.preview-page { min-height: auto; }
+    .preview-note {
+      text-align: center;
+      padding: 0.85rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #888;
+      background: #fff;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .hero-corner {
+      position: absolute;
+      width: 220px;
+      height: auto;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.95;
+    }
+    .hero-corner-top-right {
+      top: 0;
+      right: 0;
+      -webkit-mask-image: linear-gradient(215deg, black 35%, transparent 82%);
+      mask-image: linear-gradient(215deg, black 35%, transparent 82%);
+    }
+    .hero-corner-bottom-left {
+      bottom: 0;
+      left: 0;
+      -webkit-mask-image: linear-gradient(35deg, black 35%, transparent 82%);
+      mask-image: linear-gradient(35deg, black 35%, transparent 82%);
+    }
+    @media (max-width: 768px) {
+      .hero-corner {
+        width: 130px;
+      }
+    }
+  </style>
+</head>
+<body class="preview-page">
+  <div class="preview-note">Aperçu — feuilles décoratives sur le hero (non appliqué au site)</div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo"><img src="images/logo.jpg" alt="Logo Le P'tit Bistro Réunionnais" class="logo-img"><a href="index.html" class="logo-text">Le P'tit Bistro Réunionnais</a></div>
+      <nav class="main-nav">
+        <a href="index.html" class="active">Accueil</a>
+        <a href="menu.html">Notre Carte</a>
+        <a href="faq.html">FAQ</a>
+        <a href="reservation.html" class="nav-cta">Réserver ma table</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero hero-ornate" style="min-height: 90vh; position: relative;">
+    <img src="images/corner-top-right.png" alt="" class="hero-corner hero-corner-top-right">
+    <img src="images/corner-bottom-left.png" alt="" class="hero-corner hero-corner-bottom-left">
+    <div class="container hero-ornate-content">
+      <div class="hero-ornament" aria-hidden="true">
+        <svg class="hero-fan" viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg">
+          <g class="hero-fan-lines">
+            <line x1="100" y1="65" x2="100" y2="12" transform="rotate(-70 100 65)"/>
+            <line x1="100" y1="65" x2="100" y2="12" transform="rotate(-52.5 100 65)"/>
+            <line x1="100" y1="65" x2="100" y2="12" transform="rotate(-35 100 65)"/>
+            <line x1="100" y1="65" x2="100" y2="12" transform="rotate(-17.5 100 65)"/>
+            <line x1="100" y1="65" x2="100" y2="8"/>
+            <line x1="100" y1="65" x2="100" y2="12" transform="rotate(17.5 100 65)"/>
+            <line x1="100" y1="65" x2="100" y2="12" transform="rotate(35 100 65)"/>
+            <line x1="100" y1="65" x2="100" y2="12" transform="rotate(52.5 100 65)"/>
+            <line x1="100" y1="65" x2="100" y2="12" transform="rotate(70 100 65)"/>
+          </g>
+        </svg>
+        <div class="hero-ornament-rule">
+          <span class="hero-ornament-line"></span>
+          <span class="hero-ornament-diamond"></span>
+          <span class="hero-ornament-line"></span>
+        </div>
+      </div>
+      <h1 class="hero-title">Le P'tit Bistro<br>Réunionnais</h1>
+      <div class="hero-subtitle-row">
+        <span class="hero-subtitle-line"></span>
+        <span class="hero-subtitle-text">Cuisine familiale bistronomique</span>
+        <span class="hero-subtitle-line"></span>
+      </div>
+      <p class="hero-text">Ici, les épices racontent une histoire, les plats mijotent comme à la maison, et chaque bouchée révèle le métissage culinaire réunionnais. Un véritable moment de partage, de chaleur et d'évasion.</p>
+      <div class="hero-actions">
+        <a href="reservation.html" class="btn btn-primary">Réserver ma table</a>
+        <a href="menu.html" class="btn btn-outline">Découvrir la carte</a>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
