@@ -55,14 +55,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Diagnostic temporaire (à retirer une fois le déploiement validé) ---
 app.get('/api/debug-env', (req, res) => {
-  const describe = (v) => (v ? `présent (${v.length} car., commence par "${v.slice(0, 8)}")` : 'absent');
+  const describe = (v) => (v ? `présent (${v.length} car.)` : 'absent');
   res.json({
     KV_REST_API_URL: describe(process.env.KV_REST_API_URL),
     KV_REST_API_TOKEN: describe(process.env.KV_REST_API_TOKEN),
     UPSTASH_REDIS_REST_URL: describe(process.env.UPSTASH_REDIS_REST_URL),
     UPSTASH_REDIS_REST_TOKEN: describe(process.env.UPSTASH_REDIS_REST_TOKEN),
     BLOB_READ_WRITE_TOKEN: describe(process.env.BLOB_READ_WRITE_TOKEN),
-    ADMIN_PASSWORD: describe(process.env.ADMIN_PASSWORD)
+    VERCEL_ENV: process.env.VERCEL_ENV || 'absent'
   });
 });
 
