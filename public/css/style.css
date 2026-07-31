@@ -1059,9 +1059,36 @@ th {
     display: none;
   }
   .hero {
-    padding: 4.5rem 0;
+    padding: 1.5rem 0;
   }
   .hero h1 {
-    font-size: 2rem;
+    font-size: 1.7rem;
+  }
+  .hero p {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+  .hero-ornament {
+    margin-bottom: 1.1rem;
+  }
+  .hero-fan {
+    width: 80px;
+    height: 28px;
+  }
+  .hero-actions {
+    flex-wrap: wrap;
+  }
+  .hero-subtitle-row {
+    margin-bottom: 1.25rem;
+  }
+  .hero-subtitle-text {
+    font-size: 0.72rem;
+  }
+  .info-bar {
+    justify-content: flex-start;
+    gap: 1.5rem;
+  }
+  .carte-teaser-image img {
+    width: 220px;
   }
 }
