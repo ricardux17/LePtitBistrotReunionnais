@@ -87,7 +87,7 @@ function setupLightbox() {
   }
 
   document.body.addEventListener('click', (e) => {
-    if (e.target.classList.contains('menu-item-photo')) {
+    if (e.target.classList.contains('menu-item-photo') || e.target.classList.contains('carte-image')) {
       openLightbox(e.target.src, e.target.alt);
     }
   });

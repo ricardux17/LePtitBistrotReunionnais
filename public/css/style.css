@@ -519,6 +519,12 @@ h1, h2, h3, h4 {
   width: 700px;
   border-radius: 12px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.carte-image:hover {
+  opacity: 0.9;
 }
 
 /* Bascule Carte Nourriture / Carte Boissons */
