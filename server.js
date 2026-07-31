@@ -53,19 +53,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-let dbReady = null;
-app.use((req, res, next) => {
-  if (!dbReady) dbReady = db.init();
-  dbReady.then(() => next()).catch(next);
-});
-
-function requireAdmin(req, res, next) {
-  if (req.header('x-admin-password') !== ADMIN_PASSWORD) {
-    return res.status(401).json({ error: 'Non autorisé' });
-  }
-  next();
-}
-
 // --- Diagnostic temporaire (à retirer une fois le déploiement validé) ---
 app.get('/api/debug-env', (req, res) => {
   const describe = (v) => (v ? `présent (${v.length} car., commence par "${v.slice(0, 8)}")` : 'absent');
@@ -78,6 +65,19 @@ app.get('/api/debug-env', (req, res) => {
     ADMIN_PASSWORD: describe(process.env.ADMIN_PASSWORD)
   });
 });
+
+let dbReady = null;
+app.use((req, res, next) => {
+  if (!dbReady) dbReady = db.init();
+  dbReady.then(() => next()).catch(next);
+});
+
+function requireAdmin(req, res, next) {
+  if (req.header('x-admin-password') !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Non autorisé' });
+  }
+  next();
+}
 
 // --- Réglages (carte du moment) ---
 app.get('/api/settings', async (req, res) => {
