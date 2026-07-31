@@ -70,6 +70,19 @@ app.get('/api/debug-env', (req, res) => {
   });
 });
 
+app.get('/api/debug-blob', async (req, res) => {
+  const start = Date.now();
+  try {
+    const blob = await put(`debug/test-${Date.now()}.txt`, 'hello world', {
+      access: 'public',
+      contentType: 'text/plain'
+    });
+    res.json({ ok: true, ms: Date.now() - start, url: blob.url });
+  } catch (err) {
+    res.status(500).json({ ok: false, ms: Date.now() - start, error: err.message });
+  }
+});
+
 let dbReady = null;
 app.use((req, res, next) => {
   if (!dbReady) dbReady = db.init();
