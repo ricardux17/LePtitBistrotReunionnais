@@ -1088,7 +1088,7 @@ th {
     justify-content: flex-start;
     gap: 1.5rem;
   }
-  .carte-teaser-image img {
-    width: 220px;
+  .carte-teaser-image {
+    display: none;
   }
 }
