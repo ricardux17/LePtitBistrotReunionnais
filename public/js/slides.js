@@ -12,7 +12,8 @@
   function setWrapperHeight() {
     const header = document.querySelector('.site-header');
     const headerHeight = header ? header.offsetHeight : 0;
-    wrapper.style.height = `${window.innerHeight - headerHeight}px`;
+    const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    wrapper.style.height = `${viewportHeight - headerHeight}px`;
   }
 
   function updateDots() {
@@ -44,8 +45,9 @@
 
   wrapper.addEventListener('wheel', (e) => {
     const activeSlide = slides[current];
-    const canScrollDown = activeSlide.scrollTop + activeSlide.clientHeight < activeSlide.scrollHeight - 1;
-    const canScrollUp = activeSlide.scrollTop > 0;
+    const SCROLL_TOLERANCE = 12;
+    const canScrollDown = activeSlide.scrollTop + activeSlide.clientHeight < activeSlide.scrollHeight - SCROLL_TOLERANCE;
+    const canScrollUp = activeSlide.scrollTop > SCROLL_TOLERANCE;
 
     if (e.deltaY > 0 && canScrollDown) return;
     if (e.deltaY < 0 && canScrollUp) return;
@@ -93,6 +95,10 @@
   });
 
   window.addEventListener('resize', setWrapperHeight);
+  window.addEventListener('orientationchange', setWrapperHeight);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', setWrapperHeight);
+  }
   setWrapperHeight();
   updateDots();
 })();
