@@ -81,6 +81,7 @@ Variables d'environnement (`.env` en local, onglet "Environment Variables" du pr
 - `KV_REST_API_URL` / `KV_REST_API_TOKEN` — accès à la base Redis (voir déploiement ci-dessous)
 - `BLOB_READ_WRITE_TOKEN` — accès au stockage des photos (voir déploiement ci-dessous)
 - `SMTP_*` / `FROM_EMAIL` / `FROM_NAME` — voir la section email plus bas
+- `MAINTENANCE_MODE` / `MAINTENANCE_BYPASS_KEY` — voir la section mode maintenance plus bas
 
 ## Déploiement sur Vercel
 
@@ -129,6 +130,14 @@ Le mot de passe de `/admin.html` est stocké hashé (bcrypt) dans Redis — plus
 - **Mot de passe oublié** : lien « Mot de passe oublié ? » sur l'écran de connexion → un code à 6 chiffres (valable 15 minutes) est envoyé par email à l'adresse `ADMIN_EMAIL`, à saisir avec le nouveau mot de passe pour réinitialiser.
 
 ⚠️ La récupération par email nécessite que les variables `SMTP_*` soient configurées (voir section précédente) et que `ADMIN_EMAIL` soit renseignée. Sans ça, le bouton « Envoyer le code » renverra une erreur — seul le changement de mot de passe (avec l'ancien mot de passe) fonctionnera.
+
+## Mode maintenance
+
+Tant que `MAINTENANCE_MODE` n'est pas explicitement mis à `false`, le site affiche une simple page « bientôt en ligne » à tous les visiteurs (le code et les données restent intacts, rien n'est supprimé). **En production sur Vercel, ce mode est donc actif par défaut** tant que la variable n'a pas été ajoutée avec la valeur `false`.
+
+Pour prévisualiser le site avant de le rendre public, définir `MAINTENANCE_BYPASS_KEY` (une chaîne secrète au choix) puis visiter n'importe quelle page avec `?key=la-cle-choisie` — un cookie est posé et le site reste visible normalement lors des visites suivantes, uniquement pour toi.
+
+Pour ouvrir le site au public une fois prêt : mettre `MAINTENANCE_MODE=false` dans les Environment Variables du projet sur Vercel, puis redéployer.
 
 ## Modifier le contenu
 

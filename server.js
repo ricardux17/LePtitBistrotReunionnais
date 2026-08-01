@@ -49,6 +49,51 @@ async function deleteFromBlob(url) {
   }
 }
 
+const MAINTENANCE_MODE = process.env.MAINTENANCE_MODE !== 'false';
+const MAINTENANCE_BYPASS_KEY = process.env.MAINTENANCE_BYPASS_KEY || '';
+
+const MAINTENANCE_PAGE = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le P'tit Bistro Réunionnais | Bientôt en ligne</title>
+<style>
+  body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #faf8f5; color: #111111; font-family: 'Poppins', Arial, sans-serif; text-align: center; padding: 2rem; box-sizing: border-box; }
+  .box { max-width: 480px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: 2rem; margin: 0 0 1rem; }
+  p { color: #6f6f6f; line-height: 1.6; }
+</style>
+</head>
+<body>
+  <div class="box">
+    <h1>Le P'tit Bistro Réunionnais</h1>
+    <p>Notre site est actuellement en préparation.<br>Merci de votre patience, nous serons bientôt en ligne.</p>
+  </div>
+</body>
+</html>`;
+
+function hasMaintenanceBypass(req) {
+  if (!MAINTENANCE_BYPASS_KEY) return false;
+  if (req.query.key === MAINTENANCE_BYPASS_KEY) return true;
+  const cookie = req.headers.cookie || '';
+  return cookie.split(';').some(c => c.trim() === `bypass=${MAINTENANCE_BYPASS_KEY}`);
+}
+
+app.use((req, res, next) => {
+  if (!MAINTENANCE_MODE) return next();
+  if (hasMaintenanceBypass(req)) {
+    if (req.query.key === MAINTENANCE_BYPASS_KEY) {
+      res.cookie('bypass', MAINTENANCE_BYPASS_KEY, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'lax' });
+    }
+    return next();
+  }
+  if (req.path.startsWith('/api/')) {
+    return res.status(503).json({ error: 'Site en maintenance.' });
+  }
+  res.status(503).type('html').send(MAINTENANCE_PAGE);
+});
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
