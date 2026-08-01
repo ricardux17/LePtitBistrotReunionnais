@@ -436,6 +436,21 @@ if (getPassword()) {
   showLogin();
 }
 
+// --- Afficher/masquer les mots de passe ---
+document.querySelectorAll('.password-toggle').forEach(btn => {
+  const input = document.getElementById(btn.dataset.target);
+  const eyeIcon = btn.querySelector('.icon-eye');
+  const eyeOffIcon = btn.querySelector('.icon-eye-off');
+
+  btn.addEventListener('click', () => {
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    eyeIcon.classList.toggle('hidden', isHidden);
+    eyeOffIcon.classList.toggle('hidden', !isHidden);
+    btn.setAttribute('aria-label', isHidden ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+  });
+});
+
 // --- Mot de passe oublié ---
 const loginForm = document.getElementById('login-form');
 const forgotPasswordForm = document.getElementById('forgot-password-form');

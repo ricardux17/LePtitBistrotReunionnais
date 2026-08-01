@@ -30,7 +30,13 @@
       <div id="login-box" class="form-card narrow">
         <div id="login-form">
           <label for="admin-password">Mot de passe administrateur</label>
-          <input type="password" id="admin-password">
+          <div class="password-field">
+            <input type="password" id="admin-password">
+            <button type="button" class="password-toggle" aria-label="Afficher le mot de passe" data-target="admin-password">
+              <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="icon-eye-off hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.4 20.4 0 0 1 5.06-5.94M9.9 4.24A10.6 10.6 0 0 1 12 5c7 0 11 7 11 7a20.5 20.5 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
           <button id="login-btn" class="btn btn-primary">Se connecter</button>
           <p id="login-feedback" class="form-feedback"></p>
           <p class="admin-hint"><a href="#" id="forgot-password-link">Mot de passe oublié ?</a></p>
@@ -48,7 +54,13 @@
             </div>
             <div class="form-row">
               <label for="reset-new-password">Nouveau mot de passe</label>
-              <input type="password" id="reset-new-password">
+              <div class="password-field">
+                <input type="password" id="reset-new-password">
+                <button type="button" class="password-toggle" aria-label="Afficher le mot de passe" data-target="reset-new-password">
+                  <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="icon-eye-off hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.4 20.4 0 0 1 5.06-5.94M9.9 4.24A10.6 10.6 0 0 1 12 5c7 0 11 7 11 7a20.5 20.5 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
             </div>
             <button id="reset-password-btn" class="btn btn-primary">Réinitialiser le mot de passe</button>
           </div>
@@ -236,15 +248,33 @@
             <form id="change-password-form">
               <div class="form-row">
                 <label for="current-password">Mot de passe actuel *</label>
-                <input type="password" id="current-password" required>
+                <div class="password-field">
+                  <input type="password" id="current-password" required>
+                  <button type="button" class="password-toggle" aria-label="Afficher le mot de passe" data-target="current-password">
+                    <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="icon-eye-off hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.4 20.4 0 0 1 5.06-5.94M9.9 4.24A10.6 10.6 0 0 1 12 5c7 0 11 7 11 7a20.5 20.5 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  </button>
+                </div>
               </div>
               <div class="form-row">
                 <label for="new-password">Nouveau mot de passe *</label>
-                <input type="password" id="new-password" required minlength="6">
+                <div class="password-field">
+                  <input type="password" id="new-password" required minlength="6">
+                  <button type="button" class="password-toggle" aria-label="Afficher le mot de passe" data-target="new-password">
+                    <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="icon-eye-off hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.4 20.4 0 0 1 5.06-5.94M9.9 4.24A10.6 10.6 0 0 1 12 5c7 0 11 7 11 7a20.5 20.5 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  </button>
+                </div>
               </div>
               <div class="form-row">
                 <label for="confirm-new-password">Confirmer le nouveau mot de passe *</label>
-                <input type="password" id="confirm-new-password" required minlength="6">
+                <div class="password-field">
+                  <input type="password" id="confirm-new-password" required minlength="6">
+                  <button type="button" class="password-toggle" aria-label="Afficher le mot de passe" data-target="confirm-new-password">
+                    <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="icon-eye-off hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.4 20.4 0 0 1 5.06-5.94M9.9 4.24A10.6 10.6 0 0 1 12 5c7 0 11 7 11 7a20.5 20.5 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  </button>
+                </div>
               </div>
               <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
               <p id="change-password-feedback" class="form-feedback"></p>

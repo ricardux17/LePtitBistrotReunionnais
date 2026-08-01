@@ -864,6 +864,38 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--color-primary);
 }
 
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 2.75rem;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  color: var(--color-text);
+}
+
+.password-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
 .form-feedback {
   margin-top: 1rem;
   font-weight: 500;
