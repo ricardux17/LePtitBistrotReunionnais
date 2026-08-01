@@ -168,6 +168,10 @@ h1, h2, h3, h4 {
   text-decoration: none;
 }
 
+.mobile-break {
+  display: none;
+}
+
 .logo-img {
   width: 66px;
   height: 66px;
@@ -1080,11 +1084,31 @@ th {
 }
 
 @media (max-width: 768px) {
+  .mobile-break {
+    display: block;
+  }
   .main-nav {
     gap: 1rem;
   }
   .main-nav a:not(.nav-cta) {
     display: none;
+  }
+  .logo {
+    font-size: 1.05rem;
+    gap: 0.5rem;
+  }
+  .logo-img {
+    width: 46px;
+    height: 46px;
+  }
+  .logo-text {
+    text-align: center;
+    line-height: 1.2;
+  }
+  .nav-cta {
+    text-align: center;
+    line-height: 1.25;
+    padding: 0.45rem 1.1rem;
   }
   .hero {
     padding: 1.5rem 0;
