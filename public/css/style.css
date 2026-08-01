@@ -430,6 +430,12 @@ h1, h2, h3, h4 {
   background: var(--color-cream);
 }
 
+.slide.carte-teaser {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem 0;
+}
+
 .carte-teaser-inner {
   display: flex;
   align-items: center;
