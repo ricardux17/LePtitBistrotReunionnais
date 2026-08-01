@@ -28,10 +28,33 @@
   <section class="section">
     <div class="container">
       <div id="login-box" class="form-card narrow">
-        <label for="admin-password">Mot de passe administrateur</label>
-        <input type="password" id="admin-password">
-        <button id="login-btn" class="btn btn-primary">Se connecter</button>
-        <p id="login-feedback" class="form-feedback"></p>
+        <div id="login-form">
+          <label for="admin-password">Mot de passe administrateur</label>
+          <input type="password" id="admin-password">
+          <button id="login-btn" class="btn btn-primary">Se connecter</button>
+          <p id="login-feedback" class="form-feedback"></p>
+          <p class="admin-hint"><a href="#" id="forgot-password-link">Mot de passe oublié ?</a></p>
+        </div>
+
+        <div id="forgot-password-form" class="hidden">
+          <div id="forgot-step-request">
+            <p class="admin-hint">Un code de réinitialisation va être envoyé par email.</p>
+            <button id="send-reset-code-btn" class="btn btn-primary">Envoyer le code</button>
+          </div>
+          <div id="forgot-step-reset" class="hidden">
+            <div class="form-row">
+              <label for="reset-code">Code reçu par email</label>
+              <input type="text" id="reset-code" inputmode="numeric" maxlength="6">
+            </div>
+            <div class="form-row">
+              <label for="reset-new-password">Nouveau mot de passe</label>
+              <input type="password" id="reset-new-password">
+            </div>
+            <button id="reset-password-btn" class="btn btn-primary">Réinitialiser le mot de passe</button>
+          </div>
+          <p id="forgot-password-feedback" class="form-feedback"></p>
+          <p class="admin-hint"><a href="#" id="back-to-login-link">Retour à la connexion</a></p>
+        </div>
       </div>
 
       <div id="admin-panel" class="admin-panel hidden">
@@ -39,6 +62,7 @@
           <button class="tab-btn active" data-tab="reservations">Réservations</button>
           <button class="tab-btn" data-tab="carte">Carte du moment</button>
           <button class="tab-btn" data-tab="menu">Menu détaillé</button>
+          <button class="tab-btn" data-tab="security">Sécurité</button>
         </div>
 
         <div id="tab-reservations" class="tab-panel">
@@ -204,6 +228,28 @@
             <button class="menu-filter-btn" data-filter="boisson">Carte Boissons</button>
           </div>
           <div id="menu-list" class="admin-menu-list"></div>
+        </div>
+
+        <div id="tab-security" class="tab-panel hidden">
+          <div class="form-card narrow">
+            <h3>Changer le mot de passe</h3>
+            <form id="change-password-form">
+              <div class="form-row">
+                <label for="current-password">Mot de passe actuel *</label>
+                <input type="password" id="current-password" required>
+              </div>
+              <div class="form-row">
+                <label for="new-password">Nouveau mot de passe *</label>
+                <input type="password" id="new-password" required minlength="6">
+              </div>
+              <div class="form-row">
+                <label for="confirm-new-password">Confirmer le nouveau mot de passe *</label>
+                <input type="password" id="confirm-new-password" required minlength="6">
+              </div>
+              <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
+              <p id="change-password-feedback" class="form-feedback"></p>
+            </form>
+          </div>
         </div>
       </div>
     </div>

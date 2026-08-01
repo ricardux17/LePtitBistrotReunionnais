@@ -67,4 +67,35 @@ async function sendReservationConfirmation(reservation) {
   }
 }
 
-module.exports = { sendReservationConfirmation };
+function buildPasswordResetEmail(code) {
+  return `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #111111;">
+      <h2 style="margin: 0 0 1.5rem; color: #111111;">Le P'tit Bistro Réunionnais</h2>
+      <p>Voici le code pour réinitialiser le mot de passe de l'espace admin :</p>
+      <p style="font-size: 2rem; font-weight: bold; letter-spacing: 0.2em; text-align: center; margin: 1.5rem 0;">${code}</p>
+      <p style="color: #6f6f6f; font-size: 0.9rem;">Ce code expire dans 15 minutes. Si tu n'es pas à l'origine de cette demande, ignore simplement cet email.</p>
+    </div>
+  `;
+}
+
+async function sendAdminPasswordReset(email, code) {
+  if (!transporter) {
+    console.warn('[mailer] Email non envoyé : configuration SMTP manquante (voir .env).');
+    return { sent: false, reason: 'smtp_not_configured' };
+  }
+
+  try {
+    await transporter.sendMail({
+      from: `"${FROM_NAME || "Le P'tit Bistro Réunionnais"}" <${FROM_EMAIL || SMTP_USER}>`,
+      to: email,
+      subject: 'Code de réinitialisation — Espace admin',
+      html: buildPasswordResetEmail(code)
+    });
+    return { sent: true };
+  } catch (err) {
+    console.error('[mailer] Erreur lors de l\'envoi du code de réinitialisation :', err.message);
+    return { sent: false, reason: err.message };
+  }
+}
+
+module.exports = { sendReservationConfirmation, sendAdminPasswordReset };

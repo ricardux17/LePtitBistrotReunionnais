@@ -1,4 +1,5 @@
 const { Redis } = require('@upstash/redis');
+const bcrypt = require('bcryptjs');
 const seedItems = require('./seed/menu.json');
 
 const redis = new Redis({
@@ -26,7 +27,35 @@ async function init() {
   if (nextReservationId === null) ops.push(redis.set('nextReservationId', 1));
   if (settings === null) ops.push(redis.set('settings', DEFAULT_SETTINGS));
 
+  const adminPasswordHash = await redis.get('adminPasswordHash');
+  if (adminPasswordHash === null) {
+    const initialPassword = process.env.ADMIN_PASSWORD || 'change-me';
+    ops.push(redis.set('adminPasswordHash', bcrypt.hashSync(initialPassword, 10)));
+  }
+
   if (ops.length) await Promise.all(ops);
+}
+
+async function getAdminPasswordHash() {
+  return await redis.get('adminPasswordHash');
+}
+
+async function setAdminPassword(newPassword) {
+  await redis.set('adminPasswordHash', bcrypt.hashSync(newPassword, 10));
+}
+
+async function verifyAdminPassword(password) {
+  const hash = await getAdminPasswordHash();
+  if (!hash) return false;
+  return bcrypt.compareSync(password, hash);
+}
+
+async function getResetToken() {
+  return await redis.get('adminResetToken');
+}
+
+async function setResetToken(token) {
+  await redis.set('adminResetToken', token);
 }
 
 async function getMenu() {
@@ -81,5 +110,9 @@ module.exports = {
   getNextMenuId,
   setNextMenuId,
   getNextReservationId,
-  setNextReservationId
+  setNextReservationId,
+  verifyAdminPassword,
+  setAdminPassword,
+  getResetToken,
+  setResetToken
 };

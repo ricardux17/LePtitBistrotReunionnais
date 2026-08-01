@@ -5,11 +5,11 @@ const path = require('path');
 const multer = require('multer');
 const { put, del } = require('@vercel/blob');
 const db = require('./db');
-const { sendReservationConfirmation } = require('./mailer');
+const { sendReservationConfirmation, sendAdminPasswordReset } = require('./mailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-me';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const MENU_TYPES = ['nourriture', 'boisson'];
 
 function imageFileFilter(req, file, cb) {
@@ -59,12 +59,70 @@ app.use((req, res, next) => {
   dbReady.then(() => next()).catch(next);
 });
 
-function requireAdmin(req, res, next) {
-  if (req.header('x-admin-password') !== ADMIN_PASSWORD) {
+async function requireAdmin(req, res, next) {
+  const password = req.header('x-admin-password') || '';
+  const valid = await db.verifyAdminPassword(password);
+  if (!valid) {
     return res.status(401).json({ error: 'Non autorisé' });
   }
   next();
 }
+
+// --- Mot de passe admin ---
+app.post('/api/admin/change-password', requireAdmin, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ error: 'Merci de remplir tous les champs.' });
+  }
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: 'Le nouveau mot de passe doit contenir au moins 6 caractères.' });
+  }
+
+  const valid = await db.verifyAdminPassword(currentPassword);
+  if (!valid) {
+    return res.status(401).json({ error: 'Mot de passe actuel incorrect.' });
+  }
+
+  await db.setAdminPassword(newPassword);
+  res.json({ success: true });
+});
+
+app.post('/api/admin/forgot-password', async (req, res) => {
+  if (!ADMIN_EMAIL) {
+    return res.status(400).json({ error: 'Aucune adresse email de récupération n\'est configurée (ADMIN_EMAIL).' });
+  }
+
+  const code = String(Math.floor(100000 + Math.random() * 900000));
+  await db.setResetToken({ code, expiresAt: Date.now() + 15 * 60 * 1000 });
+
+  const result = await sendAdminPasswordReset(ADMIN_EMAIL, code);
+  if (!result.sent) {
+    return res.status(500).json({ error: 'Impossible d\'envoyer l\'email pour le moment. Vérifie la configuration SMTP.' });
+  }
+
+  res.json({ success: true });
+});
+
+app.post('/api/admin/reset-password', async (req, res) => {
+  const { code, newPassword } = req.body;
+
+  if (!code || !newPassword) {
+    return res.status(400).json({ error: 'Merci de remplir tous les champs.' });
+  }
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: 'Le nouveau mot de passe doit contenir au moins 6 caractères.' });
+  }
+
+  const token = await db.getResetToken();
+  if (!token || token.code !== code || Date.now() > token.expiresAt) {
+    return res.status(401).json({ error: 'Code invalide ou expiré.' });
+  }
+
+  await db.setAdminPassword(newPassword);
+  await db.setResetToken(null);
+  res.json({ success: true });
+});
 
 // --- Réglages (carte du moment) ---
 app.get('/api/settings', async (req, res) => {

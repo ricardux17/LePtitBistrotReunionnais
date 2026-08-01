@@ -78,7 +78,8 @@ const tabButtons = document.querySelectorAll('.tab-btn');
 const tabPanels = {
   reservations: document.getElementById('tab-reservations'),
   carte: document.getElementById('tab-carte'),
-  menu: document.getElementById('tab-menu')
+  menu: document.getElementById('tab-menu'),
+  security: document.getElementById('tab-security')
 };
 
 tabButtons.forEach(btn => {
@@ -434,3 +435,138 @@ if (getPassword()) {
 } else {
   showLogin();
 }
+
+// --- Mot de passe oublié ---
+const loginForm = document.getElementById('login-form');
+const forgotPasswordForm = document.getElementById('forgot-password-form');
+const forgotPasswordLink = document.getElementById('forgot-password-link');
+const backToLoginLink = document.getElementById('back-to-login-link');
+const forgotStepRequest = document.getElementById('forgot-step-request');
+const forgotStepReset = document.getElementById('forgot-step-reset');
+const sendResetCodeBtn = document.getElementById('send-reset-code-btn');
+const resetPasswordBtn = document.getElementById('reset-password-btn');
+const resetCodeInput = document.getElementById('reset-code');
+const resetNewPasswordInput = document.getElementById('reset-new-password');
+const forgotPasswordFeedback = document.getElementById('forgot-password-feedback');
+
+function resetForgotPasswordForm() {
+  forgotStepRequest.classList.remove('hidden');
+  forgotStepReset.classList.add('hidden');
+  resetCodeInput.value = '';
+  resetNewPasswordInput.value = '';
+  forgotPasswordFeedback.textContent = '';
+  forgotPasswordFeedback.className = 'form-feedback';
+}
+
+forgotPasswordLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  resetForgotPasswordForm();
+  loginForm.classList.add('hidden');
+  forgotPasswordForm.classList.remove('hidden');
+});
+
+backToLoginLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  forgotPasswordForm.classList.add('hidden');
+  loginForm.classList.remove('hidden');
+});
+
+sendResetCodeBtn.addEventListener('click', async () => {
+  forgotPasswordFeedback.className = 'form-feedback';
+  forgotPasswordFeedback.textContent = 'Envoi en cours...';
+
+  try {
+    const res = await fetch('/api/admin/forgot-password', { method: 'POST' });
+    const result = await res.json();
+
+    if (!res.ok) throw new Error(result.error || 'Erreur lors de l\'envoi du code.');
+
+    forgotPasswordFeedback.textContent = 'Code envoyé ! Vérifie ta boîte mail.';
+    forgotPasswordFeedback.classList.add('success');
+    forgotStepRequest.classList.add('hidden');
+    forgotStepReset.classList.remove('hidden');
+  } catch (err) {
+    forgotPasswordFeedback.textContent = err.message;
+    forgotPasswordFeedback.classList.add('error');
+  }
+});
+
+resetPasswordBtn.addEventListener('click', async () => {
+  const code = resetCodeInput.value.trim();
+  const newPassword = resetNewPasswordInput.value;
+
+  if (!code || !newPassword) {
+    forgotPasswordFeedback.className = 'form-feedback error';
+    forgotPasswordFeedback.textContent = 'Merci de remplir tous les champs.';
+    return;
+  }
+
+  forgotPasswordFeedback.className = 'form-feedback';
+  forgotPasswordFeedback.textContent = 'Réinitialisation en cours...';
+
+  try {
+    const res = await fetch('/api/admin/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, newPassword })
+    });
+    const result = await res.json();
+
+    if (!res.ok) throw new Error(result.error || 'Erreur lors de la réinitialisation.');
+
+    sessionStorage.setItem('adminPassword', newPassword);
+    forgotPasswordForm.classList.add('hidden');
+    loginForm.classList.remove('hidden');
+    showPanel();
+  } catch (err) {
+    forgotPasswordFeedback.textContent = err.message;
+    forgotPasswordFeedback.classList.add('error');
+  }
+});
+
+// --- Changer le mot de passe (espace sécurité) ---
+const changePasswordForm = document.getElementById('change-password-form');
+const currentPasswordInput = document.getElementById('current-password');
+const newPasswordInput = document.getElementById('new-password');
+const confirmNewPasswordInput = document.getElementById('confirm-new-password');
+const changePasswordFeedback = document.getElementById('change-password-feedback');
+
+changePasswordForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const currentPassword = currentPasswordInput.value;
+  const newPassword = newPasswordInput.value;
+  const confirmNewPassword = confirmNewPasswordInput.value;
+
+  changePasswordFeedback.className = 'form-feedback';
+
+  if (newPassword !== confirmNewPassword) {
+    changePasswordFeedback.textContent = 'Les nouveaux mots de passe ne correspondent pas.';
+    changePasswordFeedback.classList.add('error');
+    return;
+  }
+
+  changePasswordFeedback.textContent = 'Enregistrement...';
+
+  try {
+    const res = await fetch('/api/admin/change-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-password': getPassword()
+      },
+      body: JSON.stringify({ currentPassword, newPassword })
+    });
+    const result = await res.json();
+
+    if (!res.ok) throw new Error(result.error || 'Erreur lors du changement de mot de passe.');
+
+    sessionStorage.setItem('adminPassword', newPassword);
+    changePasswordFeedback.textContent = 'Mot de passe modifié avec succès !';
+    changePasswordFeedback.classList.add('success');
+    changePasswordForm.reset();
+  } catch (err) {
+    changePasswordFeedback.textContent = err.message;
+    changePasswordFeedback.classList.add('error');
+  }
+});

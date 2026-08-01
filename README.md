@@ -76,7 +76,8 @@ Pour changer ces horaires, éditer `SERVICE_HOURS` dans **`server.js`** (validat
 Variables d'environnement (`.env` en local, onglet "Environment Variables" du projet sur Vercel) :
 
 - `PORT` — port du serveur en local (3000 par défaut, ignoré sur Vercel)
-- `ADMIN_PASSWORD` — mot de passe pour accéder à `/admin.html`
+- `ADMIN_PASSWORD` — mot de passe initial pour accéder à `/admin.html` (une fois l'admin connecté, le mot de passe réel est stocké — hashé — dans Redis et peut être changé depuis l'interface ; cette variable ne sert plus qu'à l'initialisation)
+- `ADMIN_EMAIL` — adresse email utilisée pour la récupération du mot de passe admin (« Mot de passe oublié ? »), nécessite aussi la config `SMTP_*` ci-dessous
 - `KV_REST_API_URL` / `KV_REST_API_TOKEN` — accès à la base Redis (voir déploiement ci-dessous)
 - `BLOB_READ_WRITE_TOKEN` — accès au stockage des photos (voir déploiement ci-dessous)
 - `SMTP_*` / `FROM_EMAIL` / `FROM_NAME` — voir la section email plus bas
@@ -91,7 +92,7 @@ L'app a besoin de deux ressources Vercel avant de fonctionner : une base **Redis
 
 3. **Ajouter un store Blob** : toujours dans *Storage* → *Create Database* → **Blob**. Vercel ajoute automatiquement la variable `BLOB_READ_WRITE_TOKEN`.
 
-4. **Ajouter les autres variables** : dans *Settings → Environment Variables*, ajouter `ADMIN_PASSWORD` et, si tu veux activer les emails, les variables `SMTP_*` (voir section suivante).
+4. **Ajouter les autres variables** : dans *Settings → Environment Variables*, ajouter `ADMIN_PASSWORD`, `ADMIN_EMAIL` et, si tu veux activer les emails, les variables `SMTP_*` (voir section suivante).
 
 5. **Déployer** : Vercel déploie automatiquement à chaque push. Le site sera disponible sur l'URL `*.vercel.app` fournie (un nom de domaine personnalisé peut être ajouté dans *Settings → Domains*).
 
@@ -120,6 +121,15 @@ Deux options courantes :
 
 Le contenu de l'email (texte, mise en page) se modifie dans **`mailer.js`**.
 
+## Mot de passe admin
+
+Le mot de passe de `/admin.html` est stocké hashé (bcrypt) dans Redis — plus jamais en clair. `ADMIN_PASSWORD` ne sert qu'à initialiser ce hash la toute première fois que la base est créée ; ensuite, cette variable n'est plus utilisée.
+
+- **Changer le mot de passe** : une fois connecté à l'admin, onglet *Sécurité* → renseigner le mot de passe actuel et le nouveau.
+- **Mot de passe oublié** : lien « Mot de passe oublié ? » sur l'écran de connexion → un code à 6 chiffres (valable 15 minutes) est envoyé par email à l'adresse `ADMIN_EMAIL`, à saisir avec le nouveau mot de passe pour réinitialiser.
+
+⚠️ La récupération par email nécessite que les variables `SMTP_*` soient configurées (voir section précédente) et que `ADMIN_EMAIL` soit renseignée. Sans ça, le bouton « Envoyer le code » renverra une erreur — seul le changement de mot de passe (avec l'ancien mot de passe) fonctionnera.
+
 ## Modifier le contenu
 
 - **Réservations, menu, réglages (carte du moment)** : tout se gère depuis `/admin.html`, aucune édition de fichier nécessaire.
@@ -141,5 +151,8 @@ Le contenu de l'email (texte, mise en page) se modifie dans **`mailer.js`**.
 | GET | `/api/reservations` | Liste des réservations | admin |
 | PATCH | `/api/reservations/:id` | Changer le statut d'une réservation | admin |
 | DELETE | `/api/reservations/:id` | Supprimer une réservation | admin |
+| POST | `/api/admin/change-password` | Changer le mot de passe admin (`currentPassword`, `newPassword`) | admin |
+| POST | `/api/admin/forgot-password` | Envoyer un code de réinitialisation par email à `ADMIN_EMAIL` | — |
+| POST | `/api/admin/reset-password` | Réinitialiser le mot de passe avec le code reçu (`code`, `newPassword`) | — |
 
 L'authentification admin se fait via l'en-tête `x-admin-password`.
