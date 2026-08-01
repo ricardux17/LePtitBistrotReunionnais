@@ -548,7 +548,7 @@ h1, h2, h3, h4 {
 /* Suggestion du chef */
 .chef-suggestion {
   position: relative;
-  max-width: 560px;
+  max-width: 700px;
   margin: 0 auto 2.5rem;
   border-radius: 34px;
   border: 1px solid var(--color-gold);
