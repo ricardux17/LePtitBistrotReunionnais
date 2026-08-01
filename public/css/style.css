@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Alex+Brush&display=swap');
 
 :root {
   --color-primary: #111111;
@@ -563,12 +563,14 @@ h1, h2, h3, h4 {
 
 .chef-suggestion-badge {
   display: inline-block;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-family: 'Alex Brush', cursive;
+  font-size: 2rem;
+  text-transform: none;
+  letter-spacing: normal;
   color: var(--color-gold);
-  font-weight: 600;
-  margin-bottom: 0.6rem;
+  font-weight: 400;
+  line-height: 1;
+  margin-bottom: 0.4rem;
 }
 
 .chef-suggestion-header {
