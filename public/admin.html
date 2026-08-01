@@ -89,6 +89,39 @@
               <p id="carte-boisson-feedback" class="form-feedback"></p>
             </form>
           </div>
+
+          <div class="form-card narrow admin-carte-block">
+            <h3>Suggestion du chef</h3>
+            <p class="admin-hint">Affichée dans la section « Suggestions du chef » de l'onglet Carte Nourriture.</p>
+            <div id="chef-suggestion-preview" class="admin-chef-preview hidden">
+              <img id="chef-suggestion-photo-preview" src="" alt="" class="admin-carte-preview">
+            </div>
+            <form id="chef-suggestion-form">
+              <div class="form-row">
+                <label for="chef-suggestion-name">Nom du plat *</label>
+                <input type="text" id="chef-suggestion-name" required>
+              </div>
+              <div class="form-row">
+                <label for="chef-suggestion-description">Description</label>
+                <textarea id="chef-suggestion-description" rows="2"></textarea>
+              </div>
+              <div class="form-row form-grid">
+                <div>
+                  <label for="chef-suggestion-price">Prix (€) *</label>
+                  <input type="number" id="chef-suggestion-price" step="0.5" min="0" required>
+                </div>
+                <div>
+                  <label for="chef-suggestion-photo">Photo (optionnel)</label>
+                  <input type="file" id="chef-suggestion-photo" accept="image/*">
+                </div>
+              </div>
+              <div class="form-row form-actions">
+                <button type="submit" class="btn btn-primary">Enregistrer la suggestion</button>
+                <button type="button" class="btn btn-outline hidden" id="chef-suggestion-remove-btn">Retirer la suggestion</button>
+              </div>
+              <p id="chef-suggestion-feedback" class="form-feedback"></p>
+            </form>
+          </div>
         </div>
 
         <div id="tab-menu" class="tab-panel hidden">

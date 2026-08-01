@@ -90,6 +90,46 @@ app.post('/api/admin/carte', requireAdmin, uploadCarte.single('carte'), async (r
   res.json({ [settingKey]: carteImage, type });
 });
 
+app.post('/api/admin/chef-suggestion', requireAdmin, uploadMenuPhoto.single('photo'), async (req, res) => {
+  const { name, description, price } = req.body;
+
+  if (!name || !price) {
+    return res.status(400).json({ error: 'Le nom et le prix du plat sont obligatoires.' });
+  }
+
+  const settings = await db.getSettings();
+  const previousPhoto = settings.chefSuggestion ? settings.chefSuggestion.photo : '';
+
+  const chefSuggestion = {
+    name,
+    description: description || '',
+    price: Number(price),
+    photo: req.file ? await uploadToBlob(req.file, 'chef') : previousPhoto || ''
+  };
+
+  settings.chefSuggestion = chefSuggestion;
+  await db.setSettings(settings);
+
+  if (req.file) {
+    await deleteFromBlob(previousPhoto);
+  }
+
+  res.json(chefSuggestion);
+});
+
+app.delete('/api/admin/chef-suggestion', requireAdmin, async (req, res) => {
+  const settings = await db.getSettings();
+
+  if (settings.chefSuggestion) {
+    await deleteFromBlob(settings.chefSuggestion.photo);
+  }
+
+  settings.chefSuggestion = null;
+  await db.setSettings(settings);
+
+  res.status(204).end();
+});
+
 // --- Menu ---
 app.get('/api/menu', async (req, res) => {
   res.json(await db.getMenu());

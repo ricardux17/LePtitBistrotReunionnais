@@ -1,3 +1,25 @@
+function renderChefSuggestion(suggestion) {
+  const card = document.getElementById('chef-suggestion-card');
+  if (!suggestion) {
+    card.classList.add('hidden');
+    card.innerHTML = '';
+    return;
+  }
+
+  card.innerHTML = `
+    <div class="chef-suggestion-body">
+      <span class="chef-suggestion-badge">Suggestion du chef</span>
+      <div class="chef-suggestion-header">
+        <h4>${suggestion.name}</h4>
+        <span class="chef-suggestion-price">${suggestion.price.toFixed(2)} €</span>
+      </div>
+      <p>${suggestion.description}</p>
+      ${suggestion.photo ? `<img src="${suggestion.photo}" alt="${suggestion.name}" class="chef-suggestion-photo">` : ''}
+    </div>
+  `;
+  card.classList.remove('hidden');
+}
+
 async function loadCarteImage() {
   try {
     const res = await fetch('/api/settings');
@@ -14,6 +36,8 @@ async function loadCarteImage() {
     } else {
       boissonSection.classList.add('hidden');
     }
+
+    renderChefSuggestion(settings.chefSuggestion);
   } catch (err) {
     // garde l'image par défaut si la requête échoue
   }
@@ -87,7 +111,7 @@ function setupLightbox() {
   }
 
   document.body.addEventListener('click', (e) => {
-    if (e.target.classList.contains('menu-item-photo') || e.target.classList.contains('carte-image')) {
+    if (e.target.classList.contains('menu-item-photo') || e.target.classList.contains('carte-image') || e.target.classList.contains('chef-suggestion-photo')) {
       openLightbox(e.target.src, e.target.alt);
     }
   });

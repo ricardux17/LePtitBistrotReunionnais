@@ -6,7 +6,7 @@ const redis = new Redis({
   token: process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || process.env.kv_KV_REST_API_TOKEN
 });
 
-const DEFAULT_SETTINGS = { carteNourriture: 'images/carte.jpg', carteBoisson: '' };
+const DEFAULT_SETTINGS = { carteNourriture: 'images/carte.jpg', carteBoisson: '', chefSuggestion: null };
 
 async function init() {
   const [menu, reservations, nextMenuId, nextReservationId, settings] = await Promise.all([
@@ -46,7 +46,8 @@ async function setReservations(reservations) {
 }
 
 async function getSettings() {
-  return (await redis.get('settings')) || DEFAULT_SETTINGS;
+  const settings = await redis.get('settings');
+  return { ...DEFAULT_SETTINGS, ...(settings || {}) };
 }
 
 async function setSettings(settings) {

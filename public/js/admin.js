@@ -168,7 +168,83 @@ async function loadCartePreview() {
   } else {
     carteBoissonPreview.classList.add('hidden');
   }
+
+  fillChefSuggestion(settings.chefSuggestion);
 }
+
+// --- Suggestion du chef ---
+const chefForm = document.getElementById('chef-suggestion-form');
+const chefFeedback = document.getElementById('chef-suggestion-feedback');
+const chefNameInput = document.getElementById('chef-suggestion-name');
+const chefDescriptionInput = document.getElementById('chef-suggestion-description');
+const chefPriceInput = document.getElementById('chef-suggestion-price');
+const chefPhotoInput = document.getElementById('chef-suggestion-photo');
+const chefPreview = document.getElementById('chef-suggestion-preview');
+const chefPhotoPreview = document.getElementById('chef-suggestion-photo-preview');
+const chefRemoveBtn = document.getElementById('chef-suggestion-remove-btn');
+
+function fillChefSuggestion(suggestion) {
+  if (suggestion) {
+    chefNameInput.value = suggestion.name;
+    chefDescriptionInput.value = suggestion.description || '';
+    chefPriceInput.value = suggestion.price;
+    chefRemoveBtn.classList.remove('hidden');
+    if (suggestion.photo) {
+      chefPhotoPreview.src = `${suggestion.photo}?t=${Date.now()}`;
+      chefPreview.classList.remove('hidden');
+    } else {
+      chefPreview.classList.add('hidden');
+    }
+  } else {
+    chefForm.reset();
+    chefRemoveBtn.classList.add('hidden');
+    chefPreview.classList.add('hidden');
+  }
+}
+
+chefForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData();
+  formData.append('name', chefNameInput.value.trim());
+  formData.append('description', chefDescriptionInput.value.trim());
+  formData.append('price', chefPriceInput.value);
+  if (chefPhotoInput.files[0]) {
+    formData.append('photo', chefPhotoInput.files[0]);
+  }
+
+  chefFeedback.className = 'form-feedback';
+  chefFeedback.textContent = 'Enregistrement...';
+
+  try {
+    const res = await fetch('/api/admin/chef-suggestion', {
+      method: 'POST',
+      headers: { 'x-admin-password': getPassword() },
+      body: formData
+    });
+    const result = await res.json();
+
+    if (!res.ok) throw new Error(result.error || 'Erreur lors de l\'enregistrement.');
+
+    chefFeedback.textContent = 'Suggestion enregistrée avec succès !';
+    chefFeedback.classList.add('success');
+    chefPhotoInput.value = '';
+    fillChefSuggestion(result);
+  } catch (err) {
+    chefFeedback.textContent = err.message;
+    chefFeedback.classList.add('error');
+  }
+});
+
+chefRemoveBtn.addEventListener('click', async () => {
+  if (!confirm('Retirer la suggestion du chef ?')) return;
+  await fetch('/api/admin/chef-suggestion', {
+    method: 'DELETE',
+    headers: { 'x-admin-password': getPassword() }
+  });
+  fillChefSuggestion(null);
+  chefFeedback.textContent = '';
+});
 
 // --- Menu détaillé ---
 const menuList = document.getElementById('menu-list');
