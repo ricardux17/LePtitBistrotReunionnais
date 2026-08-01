@@ -49,7 +49,7 @@ async function deleteFromBlob(url) {
   }
 }
 
-const MAINTENANCE_MODE = process.env.MAINTENANCE_MODE !== 'false';
+const MAINTENANCE_MODE = process.env.MAINTENANCE_MODE === 'true';
 const MAINTENANCE_BYPASS_KEY = process.env.MAINTENANCE_BYPASS_KEY || '';
 
 const MAINTENANCE_PAGE = `<!DOCTYPE html>

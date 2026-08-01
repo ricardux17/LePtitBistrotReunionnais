@@ -133,11 +133,11 @@ Le mot de passe de `/admin.html` est stocké hashé (bcrypt) dans Redis — plus
 
 ## Mode maintenance
 
-Tant que `MAINTENANCE_MODE` n'est pas explicitement mis à `false`, le site affiche une simple page « bientôt en ligne » à tous les visiteurs (le code et les données restent intacts, rien n'est supprimé). **En production sur Vercel, ce mode est donc actif par défaut** tant que la variable n'a pas été ajoutée avec la valeur `false`.
+Mettre `MAINTENANCE_MODE=true` dans les Environment Variables du projet sur Vercel fait afficher une simple page « bientôt en ligne » à tous les visiteurs (le code et les données restent intacts, rien n'est supprimé). Par défaut (variable absente ou différente de `true`), le site est public normalement.
 
-Pour prévisualiser le site avant de le rendre public, définir `MAINTENANCE_BYPASS_KEY` (une chaîne secrète au choix) puis visiter n'importe quelle page avec `?key=la-cle-choisie` — un cookie est posé et le site reste visible normalement lors des visites suivantes, uniquement pour toi.
+Pour continuer à gérer le site (admin compris) pendant qu'il est masqué au public, définir aussi `MAINTENANCE_BYPASS_KEY` (une chaîne secrète au choix) puis visiter n'importe quelle page avec `?key=la-cle-choisie` — un cookie est posé et le site reste visible normalement lors des visites suivantes, uniquement pour toi.
 
-Pour ouvrir le site au public une fois prêt : mettre `MAINTENANCE_MODE=false` dans les Environment Variables du projet sur Vercel, puis redéployer.
+Pour remettre le site public : retirer `MAINTENANCE_MODE` (ou le passer à `false`) dans les Environment Variables Vercel, puis redéployer.
 
 ## Modifier le contenu
 
