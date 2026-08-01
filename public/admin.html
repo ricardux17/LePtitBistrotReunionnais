@@ -122,6 +122,39 @@
               <p id="chef-suggestion-feedback" class="form-feedback"></p>
             </form>
           </div>
+
+          <div class="form-card narrow admin-carte-block">
+            <h3>Suggestion du bar</h3>
+            <p class="admin-hint">Affichée dans la section « Suggestions du bar » de l'onglet Carte Boissons.</p>
+            <div id="bar-suggestion-preview" class="admin-chef-preview hidden">
+              <img id="bar-suggestion-photo-preview" src="" alt="" class="admin-carte-preview">
+            </div>
+            <form id="bar-suggestion-form">
+              <div class="form-row">
+                <label for="bar-suggestion-name">Nom de la boisson *</label>
+                <input type="text" id="bar-suggestion-name" required>
+              </div>
+              <div class="form-row">
+                <label for="bar-suggestion-description">Description</label>
+                <textarea id="bar-suggestion-description" rows="2"></textarea>
+              </div>
+              <div class="form-row form-grid">
+                <div>
+                  <label for="bar-suggestion-price">Prix (€) *</label>
+                  <input type="number" id="bar-suggestion-price" step="0.5" min="0" required>
+                </div>
+                <div>
+                  <label for="bar-suggestion-photo">Photo (optionnel)</label>
+                  <input type="file" id="bar-suggestion-photo" accept="image/*">
+                </div>
+              </div>
+              <div class="form-row form-actions">
+                <button type="submit" class="btn btn-primary">Enregistrer la suggestion</button>
+                <button type="button" class="btn btn-outline hidden" id="bar-suggestion-remove-btn">Retirer la suggestion</button>
+              </div>
+              <p id="bar-suggestion-feedback" class="form-feedback"></p>
+            </form>
+          </div>
         </div>
 
         <div id="tab-menu" class="tab-panel hidden">

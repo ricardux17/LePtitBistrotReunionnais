@@ -170,80 +170,97 @@ async function loadCartePreview() {
   }
 
   fillChefSuggestion(settings.chefSuggestion);
+  fillBarSuggestion(settings.barSuggestion);
 }
 
-// --- Suggestion du chef ---
-const chefForm = document.getElementById('chef-suggestion-form');
-const chefFeedback = document.getElementById('chef-suggestion-feedback');
-const chefNameInput = document.getElementById('chef-suggestion-name');
-const chefDescriptionInput = document.getElementById('chef-suggestion-description');
-const chefPriceInput = document.getElementById('chef-suggestion-price');
-const chefPhotoInput = document.getElementById('chef-suggestion-photo');
-const chefPreview = document.getElementById('chef-suggestion-preview');
-const chefPhotoPreview = document.getElementById('chef-suggestion-photo-preview');
-const chefRemoveBtn = document.getElementById('chef-suggestion-remove-btn');
+// --- Suggestions (chef / bar) ---
+function setupSuggestionForm({ prefix, endpoint, confirmLabel }) {
+  const form = document.getElementById(`${prefix}-suggestion-form`);
+  const feedback = document.getElementById(`${prefix}-suggestion-feedback`);
+  const nameInput = document.getElementById(`${prefix}-suggestion-name`);
+  const descriptionInput = document.getElementById(`${prefix}-suggestion-description`);
+  const priceInput = document.getElementById(`${prefix}-suggestion-price`);
+  const photoInput = document.getElementById(`${prefix}-suggestion-photo`);
+  const preview = document.getElementById(`${prefix}-suggestion-preview`);
+  const photoPreview = document.getElementById(`${prefix}-suggestion-photo-preview`);
+  const removeBtn = document.getElementById(`${prefix}-suggestion-remove-btn`);
 
-function fillChefSuggestion(suggestion) {
-  if (suggestion) {
-    chefNameInput.value = suggestion.name;
-    chefDescriptionInput.value = suggestion.description || '';
-    chefPriceInput.value = suggestion.price;
-    chefRemoveBtn.classList.remove('hidden');
-    if (suggestion.photo) {
-      chefPhotoPreview.src = `${suggestion.photo}?t=${Date.now()}`;
-      chefPreview.classList.remove('hidden');
+  function fill(suggestion) {
+    if (suggestion) {
+      nameInput.value = suggestion.name;
+      descriptionInput.value = suggestion.description || '';
+      priceInput.value = suggestion.price;
+      removeBtn.classList.remove('hidden');
+      if (suggestion.photo) {
+        photoPreview.src = `${suggestion.photo}?t=${Date.now()}`;
+        preview.classList.remove('hidden');
+      } else {
+        preview.classList.add('hidden');
+      }
     } else {
-      chefPreview.classList.add('hidden');
+      form.reset();
+      removeBtn.classList.add('hidden');
+      preview.classList.add('hidden');
     }
-  } else {
-    chefForm.reset();
-    chefRemoveBtn.classList.add('hidden');
-    chefPreview.classList.add('hidden');
   }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('name', nameInput.value.trim());
+    formData.append('description', descriptionInput.value.trim());
+    formData.append('price', priceInput.value);
+    if (photoInput.files[0]) {
+      formData.append('photo', photoInput.files[0]);
+    }
+
+    feedback.className = 'form-feedback';
+    feedback.textContent = 'Enregistrement...';
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'x-admin-password': getPassword() },
+        body: formData
+      });
+      const result = await res.json();
+
+      if (!res.ok) throw new Error(result.error || 'Erreur lors de l\'enregistrement.');
+
+      feedback.textContent = 'Suggestion enregistrée avec succès !';
+      feedback.classList.add('success');
+      photoInput.value = '';
+      fill(result);
+    } catch (err) {
+      feedback.textContent = err.message;
+      feedback.classList.add('error');
+    }
+  });
+
+  removeBtn.addEventListener('click', async () => {
+    if (!confirm(`Retirer ${confirmLabel} ?`)) return;
+    await fetch(endpoint, {
+      method: 'DELETE',
+      headers: { 'x-admin-password': getPassword() }
+    });
+    fill(null);
+    feedback.textContent = '';
+  });
+
+  return fill;
 }
 
-chefForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const formData = new FormData();
-  formData.append('name', chefNameInput.value.trim());
-  formData.append('description', chefDescriptionInput.value.trim());
-  formData.append('price', chefPriceInput.value);
-  if (chefPhotoInput.files[0]) {
-    formData.append('photo', chefPhotoInput.files[0]);
-  }
-
-  chefFeedback.className = 'form-feedback';
-  chefFeedback.textContent = 'Enregistrement...';
-
-  try {
-    const res = await fetch('/api/admin/chef-suggestion', {
-      method: 'POST',
-      headers: { 'x-admin-password': getPassword() },
-      body: formData
-    });
-    const result = await res.json();
-
-    if (!res.ok) throw new Error(result.error || 'Erreur lors de l\'enregistrement.');
-
-    chefFeedback.textContent = 'Suggestion enregistrée avec succès !';
-    chefFeedback.classList.add('success');
-    chefPhotoInput.value = '';
-    fillChefSuggestion(result);
-  } catch (err) {
-    chefFeedback.textContent = err.message;
-    chefFeedback.classList.add('error');
-  }
+const fillChefSuggestion = setupSuggestionForm({
+  prefix: 'chef',
+  endpoint: '/api/admin/chef-suggestion',
+  confirmLabel: 'la suggestion du chef'
 });
 
-chefRemoveBtn.addEventListener('click', async () => {
-  if (!confirm('Retirer la suggestion du chef ?')) return;
-  await fetch('/api/admin/chef-suggestion', {
-    method: 'DELETE',
-    headers: { 'x-admin-password': getPassword() }
-  });
-  fillChefSuggestion(null);
-  chefFeedback.textContent = '';
+const fillBarSuggestion = setupSuggestionForm({
+  prefix: 'bar',
+  endpoint: '/api/admin/bar-suggestion',
+  confirmLabel: 'la suggestion du bar'
 });
 
 // --- Menu détaillé ---

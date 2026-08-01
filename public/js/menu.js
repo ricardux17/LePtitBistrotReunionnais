@@ -1,5 +1,5 @@
-function renderChefSuggestion(suggestion) {
-  const card = document.getElementById('chef-suggestion-card');
+function renderSuggestion(elementId, label, suggestion) {
+  const card = document.getElementById(elementId);
   if (!suggestion) {
     card.classList.add('hidden');
     card.innerHTML = '';
@@ -8,7 +8,7 @@ function renderChefSuggestion(suggestion) {
 
   card.innerHTML = `
     <div class="chef-suggestion-body">
-      <span class="chef-suggestion-badge">Suggestion du chef</span>
+      <span class="chef-suggestion-badge">${label}</span>
       <div class="chef-suggestion-header">
         <h4>${suggestion.name}</h4>
         <span class="chef-suggestion-price">${suggestion.price.toFixed(2)} €</span>
@@ -30,14 +30,19 @@ async function loadCarteImage() {
     }
 
     const boissonSection = document.getElementById('carte-boisson-section');
+    const carteBoissonWrapper = document.getElementById('carte-boisson-wrapper');
+
     if (settings.carteBoisson) {
       document.getElementById('carte-image-boisson').src = settings.carteBoisson;
-      boissonSection.classList.remove('hidden');
+      carteBoissonWrapper.classList.remove('hidden');
     } else {
-      boissonSection.classList.add('hidden');
+      carteBoissonWrapper.classList.add('hidden');
     }
 
-    renderChefSuggestion(settings.chefSuggestion);
+    boissonSection.classList.toggle('hidden', !settings.carteBoisson && !settings.barSuggestion);
+
+    renderSuggestion('chef-suggestion-card', 'Suggestion du chef', settings.chefSuggestion);
+    renderSuggestion('bar-suggestion-card', 'Suggestion du bar', settings.barSuggestion);
   } catch (err) {
     // garde l'image par défaut si la requête échoue
   }

@@ -130,6 +130,46 @@ app.delete('/api/admin/chef-suggestion', requireAdmin, async (req, res) => {
   res.status(204).end();
 });
 
+app.post('/api/admin/bar-suggestion', requireAdmin, uploadMenuPhoto.single('photo'), async (req, res) => {
+  const { name, description, price } = req.body;
+
+  if (!name || !price) {
+    return res.status(400).json({ error: 'Le nom et le prix sont obligatoires.' });
+  }
+
+  const settings = await db.getSettings();
+  const previousPhoto = settings.barSuggestion ? settings.barSuggestion.photo : '';
+
+  const barSuggestion = {
+    name,
+    description: description || '',
+    price: Number(price),
+    photo: req.file ? await uploadToBlob(req.file, 'bar') : previousPhoto || ''
+  };
+
+  settings.barSuggestion = barSuggestion;
+  await db.setSettings(settings);
+
+  if (req.file) {
+    await deleteFromBlob(previousPhoto);
+  }
+
+  res.json(barSuggestion);
+});
+
+app.delete('/api/admin/bar-suggestion', requireAdmin, async (req, res) => {
+  const settings = await db.getSettings();
+
+  if (settings.barSuggestion) {
+    await deleteFromBlob(settings.barSuggestion.photo);
+  }
+
+  settings.barSuggestion = null;
+  await db.setSettings(settings);
+
+  res.status(204).end();
+});
+
 // --- Menu ---
 app.get('/api/menu', async (req, res) => {
   res.json(await db.getMenu());
