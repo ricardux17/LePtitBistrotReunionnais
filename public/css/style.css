@@ -526,8 +526,8 @@ h1, h2, h3, h4 {
 .info-bar .hours-list li {
   display: flex;
   gap: 1rem;
-  font-size: 0.95rem;
-  padding: 0.15rem 0;
+  font-size: 0.85rem;
+  padding: 0.1rem 0;
   white-space: nowrap;
 }
 
@@ -1076,6 +1076,7 @@ th {
 .slide-footer {
   display: flex;
   flex-direction: column;
+  padding-top: 1.5rem;
   padding-bottom: 0;
 }
 
@@ -1144,9 +1145,26 @@ th {
   }
   .info-bar {
     justify-content: flex-start;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
   .carte-teaser-image {
     display: none;
+  }
+  .slide-footer .section-title {
+    margin-bottom: 1.5rem;
+  }
+  .slide-footer .info-bar-item {
+    gap: 0.75rem;
+  }
+  .slide-footer .info-bar-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .slide-footer .info-bar-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+  .slide-footer .info-bar-text strong {
+    margin-bottom: 0.2rem;
   }
 }
